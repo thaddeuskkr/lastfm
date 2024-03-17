@@ -1,0 +1,33 @@
+{
+  "name": "lastfm",
+  "version": "1.0.0",
+  "description": "last.fm currently playing widget",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thaddeuskkr/lastfm.git"
+  },
+  "keywords": [
+    "lastfm"
+  ],
+  "author": "thaddeus kuah <tk@tkkr.dev> (thaddeuskkr)",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/thaddeuskkr/lastfm/issues"
+  },
+  "homepage": "https://github.com/thaddeuskkr/lastfm#readme",
+  "dependencies": {
+    "axios": "^1.6.8",
+    "canvas": "^2.11.2",
+    "dotenv": "^16.4.5",
+    "fastify": "^4.26.2"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.6.1",
+    "@types/node": "^20.11.28"
+  }
+}
