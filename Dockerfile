@@ -8,7 +8,6 @@ RUN apk --no-cache add \
     libjpeg-turbo \
     librsvg
 COPY package.json package-lock.json .
-COPY fonts/ fonts/
 COPY assets/ assets/
 
 CMD ["node", "."]
