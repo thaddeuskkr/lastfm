@@ -18,7 +18,7 @@ https://lfm.tkkr.dev/nowplaying
   *Whether the widget should have a transparent background. Defaults to `false`.*
 * `light` (optional) - boolean  
   *Whether the widget should have a light theme. Defaults to `false`.*
-* `dynamic` (optional) - boolean
+* `dynamic` (optional) - boolean  
   *Whether the widget should have a dynamic background from the colour palette of the album art.*
   *Cannot be used with `light`. Defaults to `false`.*
 ### Example Request
