@@ -43,7 +43,7 @@
         "incremental": true,
         // Language and environment
         "experimentalDecorators": true,
-        "lib": ["ESNext"],
+        "lib": ["ESNext", "DOM"],
         "target": "ES2022",
         "useDefineForClassFields": true
     }
