@@ -14,9 +14,9 @@ https://lfm.tkkr.dev/nowplaying
   *Whether to show the user's username at the bottom right. Defaults to `true`.*
 * `show_logo` (optional) - boolean  
   *Whether to show the last.fm logo on the top right. Defaults to `true`.*
-* `transparent` (optional) - boolean
+* `transparent` (optional) - boolean  
   *Whether the widget should have a transparent background. Defaults to `false`.*
-* `light` (optional) - boolean
+* `light` (optional) - boolean  
   *Whether the widget should have a light theme. Defaults to `false`.*
 ### Example Request
 * https://lfm.tkkr.dev/nowplaying?username=thaddeuskkr&size=400
