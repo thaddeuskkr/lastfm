@@ -2,6 +2,7 @@ import 'dotenv/config';
 import fastify from 'fastify';
 import axios from 'axios';
 import canvas from 'canvas';
+import { getPaletteFromURL } from 'color-thief-node';
 
 import registerFonts from './util/registerFonts.js';
 registerFonts();
@@ -33,6 +34,7 @@ app.get('/nowplaying', async (request, reply) => {
               show_logo?: string;
               transparent?: string;
               light?: string;
+              dynamic?: string;
           }
         | undefined;
     if (!query || !query.username) {
@@ -44,6 +46,7 @@ app.get('/nowplaying', async (request, reply) => {
     const showUsername = String(query.show_username) === 'undefined' ? true : query.show_username === 'true' || query.show_username === '1';
     const showLogo = String(query.show_logo) === 'undefined' ? true : query.show_logo === 'true' || query.show_logo === '1';
     const transparent = String(query.transparent) === 'undefined' ? false : query.transparent === 'true' || query.transparent === '1';
+    let dynamic = String(query.dynamic) === 'undefined' ? false : query.dynamic === 'true' || query.dynamic === '1';
     const light = String(query.light) === 'undefined' ? false : query.light === 'true' || query.light === '1';
     const width = Number(query.size || 80) * 5;
     const height = Number(query.size || 80);
@@ -54,9 +57,18 @@ app.get('/nowplaying', async (request, reply) => {
     const nowPlaying = track['@attr']?.nowplaying;
     const can = canvas.createCanvas(width, height);
     const ctx = can.getContext('2d');
+    const colors = (await getPaletteFromURL(track.image.find((img: { size: string }) => img.size === 'extralarge')?.['#text'])).sort(
+        (a, b) => calculateLuminance(a) - calculateLuminance(b)
+    );
+    if (!colors.length) dynamic = false;
     if (!transparent) {
         if (light) ctx.fillStyle = 'white';
-        else ctx.fillStyle = 'black';
+        else if (dynamic) {
+            const gradient = ctx.createLinearGradient(0, 0, can.width, can.height);
+            let j = colors.length;
+            for (let i = 0; i < colors.length; i++) gradient.addColorStop(--j, `rgb(${(colors[i] as [number, number, number]).join(',')})`);
+            ctx.fillStyle = gradient;
+        } else ctx.fillStyle = 'black';
         ctx.fillRect(0, 0, can.width, can.height);
     }
     ctx.globalCompositeOperation = 'source-over';
@@ -119,3 +131,12 @@ app.get('/nowplaying', async (request, reply) => {
 app.listen({ host: '0.0.0.0', port });
 
 process.on('SIGTERM', () => process.exit());
+
+function calculateLuminance(rgb: [number, number, number]) {
+    const [r, g, b] = rgb;
+    const a = [r, g, b].map((v) => {
+        const w = v / 255;
+        return w <= 0.03928 ? w / 12.92 : ((w + 0.055) / 1.055) ** 2.4;
+    }) as [number, number, number];
+    return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
+}
