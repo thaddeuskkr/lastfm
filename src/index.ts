@@ -114,7 +114,7 @@ app.get('/nowplaying', async (request, reply) => {
         ctx.fillText(userText, (width - userTextLength) * 0.98, height * 0.98 - smallLineHeight);
     }
     if (showLogo) {
-        const logo = await canvas.loadImage('assets/Lastfm_logo.svg');
+        const logo = await canvas.loadImage('assets/images/Lastfm_logo.svg');
         const dh = height * 0.15;
         const dw = (dh / logo.height) * logo.width;
         ctx.drawImage(logo, (width - dw) * 0.98, height * 0.1, dw, dh);
