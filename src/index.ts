@@ -31,6 +31,8 @@ app.get('/nowplaying', async (request, reply) => {
               size?: string;
               show_username?: string;
               show_logo?: string;
+              transparent?: string;
+              light?: string;
           }
         | undefined;
     if (!query || !query.username) {
@@ -41,8 +43,10 @@ app.get('/nowplaying', async (request, reply) => {
     }
     const showUsername = String(query.show_username) === 'undefined' ? true : query.show_username === 'true' || query.show_username === '1';
     const showLogo = String(query.show_logo) === 'undefined' ? true : query.show_logo === 'true' || query.show_logo === '1';
-    const width = Number(query.size || 70) * 5;
-    const height = Number(query.size || 70);
+    const transparent = String(query.transparent) === 'undefined' ? false : query.transparent === 'true' || query.transparent === '1';
+    const light = String(query.light) === 'undefined' ? false : query.light === 'true' || query.light === '1';
+    const width = Number(query.size || 80) * 5;
+    const height = Number(query.size || 80);
     const { data } = await axios({
         url: `${base}/?method=user.getrecenttracks&user=${query.username}&api_key=${api_key}&format=json&nowplaying=true`
     });
@@ -50,8 +54,11 @@ app.get('/nowplaying', async (request, reply) => {
     const nowPlaying = track['@attr']?.nowplaying;
     const can = canvas.createCanvas(width, height);
     const ctx = can.getContext('2d');
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, can.width, can.height);
+    if (!transparent) {
+        if (light) ctx.fillStyle = 'white';
+        else ctx.fillStyle = 'black';
+        ctx.fillRect(0, 0, can.width, can.height);
+    }
     ctx.globalCompositeOperation = 'source-over';
     ctx.beginPath();
     ctx.roundRect(height * 0.1, height * 0.1, height * 0.8, height * 0.8, 16);
@@ -66,7 +73,8 @@ app.get('/nowplaying', async (request, reply) => {
 
     ctx.font = `bold ${height * 0.2}px "Source Han Sans"`;
     const lineHeight = ctx.measureText('M').actualBoundingBoxAscent + ctx.measureText('M').actualBoundingBoxDescent;
-    ctx.fillStyle = 'white';
+    if (light) ctx.fillStyle = 'black';
+    else ctx.fillStyle = 'white';
     let trackName = nowPlaying ? track.name : 'Nothing playing';
     if (ctx.measureText(trackName).width > width * 0.67) {
         while (ctx.measureText(`${trackName}...`).width > width * 0.67) trackName = trackName.slice(0, -1);
