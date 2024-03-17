@@ -28,7 +28,7 @@ app.get('/nowplaying', async (request, reply) => {
     const query = request.query as
         | {
               username?: string;
-              height?: string;
+              size?: string;
               show_username?: string;
               show_logo?: string;
           }
@@ -41,8 +41,8 @@ app.get('/nowplaying', async (request, reply) => {
     }
     const showUsername = String(query.show_username) === 'undefined' ? true : query.show_username === 'true' || query.show_username === '1';
     const showLogo = String(query.show_logo) === 'undefined' ? true : query.show_logo === 'true' || query.show_logo === '1';
-    const width = Number(query.height || 70) * 5;
-    const height = Number(query.height || 70);
+    const width = Number(query.size || 70) * 5;
+    const height = Number(query.size || 70);
     const { data } = await axios({
         url: `${base}/?method=user.getrecenttracks&user=${query.username}&api_key=${api_key}&format=json&nowplaying=true`
     });
@@ -101,7 +101,11 @@ app.get('/nowplaying', async (request, reply) => {
     }
     const splitDataUrl = can.toDataURL().split(',')[1];
     if (!splitDataUrl) return await reply.code(500).send({ error: true, code: 500, message: 'Failed to generate image.' });
-    await reply.code(200).type('image/png').send(Buffer.from(splitDataUrl, 'base64'));
+    await reply
+        .code(200)
+        .header('Cache-Control', 'must-revalidate, no-cache, no-store, post-check=0, pre-check=0, private')
+        .type('image/png')
+        .send(Buffer.from(splitDataUrl, 'base64'));
 });
 
 app.listen({ host: '0.0.0.0', port });
